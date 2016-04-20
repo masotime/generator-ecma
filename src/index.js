@@ -66,7 +66,7 @@ module.exports = class Generator extends Base {
 			self._copy('package.json', 'package.json', {
 				appname, description, author, srcmain, srcmain, srcpath
 			});
-			self._copy('src/index.js', 'src/index.js', { author });
+			self._copy('src/index.js', srcmain, { author });
 		} catch (err) {
 			console.error(err.stack);
 		}

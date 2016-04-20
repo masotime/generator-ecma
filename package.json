@@ -15,6 +15,10 @@
     "bluebird": "^3.3.5",
     "yeoman-generator": "^0.22.6"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/masotime/generator-ecma.git"
+  },
   "devDependencies": {
     "babel-cli": "^6.7.5",
     "babel-core": "^6.7.6",

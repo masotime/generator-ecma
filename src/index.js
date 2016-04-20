@@ -59,13 +59,17 @@ module.exports = class Generator extends Base {
 		const srcmain = join('.', src, 'index.js');
 		const srcpath = join('.', src);
 
-		self._copy('.babelrc', '.babelrc');
-		self._copy('.eslintrc', '.eslintrc');
-		self._copy('.gitignore', '.gitignore');
-		self._copy('package.json', 'package.json', {
-			appname, description, author, srcmain, srcmain, srcpath
-		});
-		self._copy('src/index.js', 'src/index.js', { author });
+		try {
+			self._copy('.babelrc', '.babelrc');
+			self._copy('.eslintrc', '.eslintrc');
+			self._copy('.gitig', '.gitignore');
+			self._copy('package.json', 'package.json', {
+				appname, description, author, srcmain, srcmain, srcpath
+			});
+			self._copy('src/index.js', 'src/index.js', { author });
+		} catch (err) {
+			console.error(err.stack);
+		}
 	}
 
 	install() {

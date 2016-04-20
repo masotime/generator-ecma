@@ -1,6 +1,6 @@
 {
   "name": "generator-ecma",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Generates ES2015 modules with all the requisite .rc files",
   "scripts": {
     "compile": "babel --presets es2015,stage-0 --plugins transform-runtime -d app/ --ignore src/templates src/; cp -R src/templates app",

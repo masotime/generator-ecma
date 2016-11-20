@@ -68,8 +68,9 @@ export default class Generator extends Base {
 			// copy all dot files
 			self._copy(`${type}/.*`, './', model);
 
-			// rename .gitig to .gitignore
+			// rename .gitig to .gitignore, .eslin to .eslintrc
 			self.fs.move(`.gitig`, '.gitignore');
+			self.fs.move(`.eslin`, '.eslintrc');
 
 			// copy the source folder
 			self._copy(`${type}/src`, srcpath, model);

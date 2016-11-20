@@ -6,7 +6,7 @@ function askFor(name, { message, choices, filter, _default }) {
 	const type = choices ? 'list' : 'input';
 
 	return {
-		type, name, message, required, filter, default: _default
+		type, name, message, required, choices, filter, default: _default
 	};
 }
 
@@ -25,7 +25,6 @@ export default class Generator extends Base {
 
 	prompting() {
 		const self = this;
-		const done = self.async();
 		const prompts = [
 			askFor('type', {
 				message: 'What kind of app are you building?',
@@ -34,26 +33,24 @@ export default class Generator extends Base {
 			}),
 			askFor('appname', { message: 'Project name', _default: self.appname}),
 			askFor('description', { message: 'Description', _default: 'Your description here'}),
-			askFor('author', 'Author', 'Captain Anonymous'),
-			askFor('source', 'Source ES2015 folder', 'src')
+			askFor('author', { message: 'Author', _default: 'Captain Anonymous' }),
+			askFor('source', { message: 'Source ES2015 folder', _default: 'src'})
 		];
 
-		self.prompt(prompts, answers => {
-			let { appname, description, author, source } = answers;
-			self.choices = { appname, description, author, src: source };
+		return self.prompt(prompts)
+			.then(({ appname, description, author, source, type }) => {
+				self.choices = { appname, description, author, src: source, type };
 
-			// create the folder if the appname isn't the same as the current folder
-			const currentRoot = self.destinationRoot();
-			const currentFolder = basename(currentRoot);
+				// create the folder if the appname isn't the same as the current folder
+				const currentRoot = self.destinationRoot();
+				const currentFolder = basename(currentRoot);
 
-			if (currentFolder !== appname) {
-				const newRoot = join(currentRoot, appname);
-				this.log(`Since the current folder ${currentFolder} isn't the same as the application name ${appname}, ${newRoot} will be created.`);
-				self.destinationRoot(newRoot);
-			}
-
-			done();
-		});
+				if (currentFolder !== appname) {
+					const newRoot = join(currentRoot, appname);
+					this.log(`Since the current folder ${currentFolder} isn't the same as the application name ${appname}, ${newRoot} will be created.`);
+					self.destinationRoot(newRoot);
+				}
+			});
 	}
 
 	writing() {
@@ -62,12 +59,20 @@ export default class Generator extends Base {
 
 		const srcmain = join('.', src, 'index.js');
 		const srcpath = join('.', src);
+		const model = { appname, description, author, srcmain, srcpath };
 
 		try {
-			self._copy(`${type}/**/*`, srcpath, {
-				appname, description, author, srcmain, srcpath
-			});
-			self.fs.move(`${type}/src`, `${type}/${src}`, { author });
+			// copy all the root files
+			self._copy(`${type}/*`, './', model);
+
+			// copy all dot files
+			self._copy(`${type}/.*`, './', model);
+
+			// rename .gitig to .gitignore
+			self.fs.move(`.gitig`, '.gitignore');
+
+			// copy the source folder
+			self._copy(`${type}/src`, srcpath, model);
 		} catch (err) {
 			console.error(err.stack);
 		}

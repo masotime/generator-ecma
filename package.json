@@ -1,7 +1,7 @@
 {
   "name": "generator-ecma",
   "version": "1.0.1",
-  "description": "Generates ES2015 modules with all the requisite .rc files",
+  "description": "Generates ES2015 CLI apps or node modules",
   "files": [
     "app"
   ],

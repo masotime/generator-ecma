@@ -1,3 +1,3 @@
 const name = `<%= author %>`;
 
-console.log(`Hello ${name}!`);
+export default () => `Hello ${name}!`;

@@ -12,8 +12,8 @@
   "scripts": {
     "compile": "rm -rf app; babel --presets es2015,stage-0 --plugins transform-runtime,add-module-exports -d app/ --ignore src/templates src/; cp -R src/templates app",
     "lint": "eslint --debug src/",
-    "prepublish": "npm run compile",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "prepublish": "npm test; npm run compile",
+    "test": "npm run lint"
   },
   "author": "Benjamin Goh <masotime@gmail.com>",
   "license": "ISC",

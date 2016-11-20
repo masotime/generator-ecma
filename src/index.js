@@ -67,7 +67,7 @@ export default class Generator extends Base {
 			self._copy(`${type}/**/*`, srcpath, {
 				appname, description, author, srcmain, srcpath
 			});
-			self._copy('src/index.js', srcmain, { author });
+			self.fs.move(`${type}/src`, `${type}/${src}`, { author });
 		} catch (err) {
 			console.error(err.stack);
 		}

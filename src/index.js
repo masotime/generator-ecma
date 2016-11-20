@@ -1,35 +1,39 @@
 import { Base } from 'yeoman-generator';
 import { join, basename } from 'path';
 
-function askFor(name, message, _default) {
+function askFor(name, { message, choices, filter, _default }) {
 	const required = !!_default;
+	const type = choices ? 'list' : 'input';
 
 	return {
-		type: 'input',
-		name, message, required, default: _default
+		type, name, message, required, filter, default: _default
 	};
 }
 
-module.exports = class Generator extends Base {
+export default class Generator extends Base {
 	constructor(...args) {
 		super(...args);
 	}
 
 	_copy(src, dest, model = {}) {
-		this.log(`Copying ${this.templatePath(src)} => ${this.destinationPath(dest)}`);
-		this.fs.copyTpl(
-			this.templatePath(src),
-			this.destinationPath(dest),
-			model
-		);
+		const sourcePath = this.templatePath(src);
+		const targetPath = this.destinationPath(dest);
+		
+		this.log(`Copying ${sourcePath} => ${targetPath}`);
+		this.fs.copyTpl(sourcePath, targetPath, model);
 	}
 
 	prompting() {
 		const self = this;
 		const done = self.async();
 		const prompts = [
-			askFor('appname', 'Project name', self.appname),
-			askFor('description', 'Description', 'Your description here'),
+			askFor('type', {
+				message: 'What kind of app are you building?',
+				choices: ['cli', 'npm'],
+				_default: 'cli',
+			}),
+			askFor('appname', { message: 'Project name', _default: self.appname}),
+			askFor('description', { message: 'Description', _default: 'Your description here'}),
 			askFor('author', 'Author', 'Captain Anonymous'),
 			askFor('source', 'Source ES2015 folder', 'src')
 		];
@@ -54,17 +58,14 @@ module.exports = class Generator extends Base {
 
 	writing() {
 		const self = this;
-		const { appname, description, author, src } = self.choices;
+		const { appname, description, author, src, type } = self.choices;
 
 		const srcmain = join('.', src, 'index.js');
 		const srcpath = join('.', src);
 
 		try {
-			self._copy('.babelrc', '.babelrc');
-			self._copy('.eslintrc', '.eslintrc');
-			self._copy('.gitig', '.gitignore');
-			self._copy('package.json', 'package.json', {
-				appname, description, author, srcmain, srcmain, srcpath
+			self._copy(`${type}/**/*`, srcpath, {
+				appname, description, author, srcmain, srcpath
 			});
 			self._copy('src/index.js', srcmain, { author });
 		} catch (err) {
